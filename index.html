@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matterport SDK - Navigate to Sweep</title>
+    <style>
+        #matterport-container {
+            width: 800px; /* Adjust as needed */
+            height: 600px; /* Adjust as needed */
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Matterport SDK - Navigate to Sweep</h1>
+
+    <div id="matterport-container">
+        <iframe
+            id="matterport-iframe"
+            width="100%"
+            height="100%"
+            frameborder="0"
+            allowfullscreen
+            allow="xr-spatial-tracking"
+        ></iframe>
+    </div>
+
+    <div>
+        <label for="sweepId">Enter Sweep ID:</label>
+        <input type="text" id="sweepId" name="sweepId">
+        <button id="navigateToSweep">Go to Sweep</button>
+        <p id="feedback"></p>
+    </div>
+
+    <script>
+        const iframe = document.getElementById('matterport-iframe');
+        const sweepIdInput = document.getElementById('sweepId');
+        const navigateButton = document.getElementById('navigateToSweep');
+        const feedbackElement = document.getElementById('feedback');
+        let showcaseSdk = null;
+        let currentModelSid = null; // You'll need to set this
+
+        // Replace with your Matterport Showcase URL (containing the model SID)
+        const showcaseUrl = "https://my.matterport.com/show/?m=xB72BrYZjCq&play=1&qs=1&applicationKey=my1unmcyza10z52eknxb971wa";
+
+        iframe.src = showcaseUrl;
+
+        iframe.onload = async () => {
+            try {
+                showcaseSdk = await window.MP_SDK.connect(iframe);
+                console.log('Matterport SDK connected:', showcaseSdk);
+
+                // Extract the model SID from the URL if you don't have it directly
+                const urlParams = new URLSearchParams(showcaseUrl.split('?')[1]);
+                currentModelSid = urlParams.get('m'); // Assuming 'm' is the model SID parameter
+                if (!currentModelSid) {
+                    console.error('Model SID not found in the showcase URL.');
+                    feedbackElement.textContent = 'Error: Model SID not found.';
+                    return;
+                }
+
+                feedbackElement.textContent = 'Matterport Showcase loaded.';
+
+            } catch (e) {
+                console.error('Error connecting to Matterport SDK:', e);
+                feedbackElement.textContent = 'Error loading Matterport Showcase.';
+            }
+        };
+
+        navigateButton.addEventListener('click', async () => {
+            if (!showcaseSdk || !currentModelSid) {
+                feedbackElement.textContent = 'Matterport Showcase not yet loaded.';
+                return;
+            }
+
+            const sweepId = sweepIdInput.value.trim();
+            if (!sweepId) {
+                feedbackElement.textContent = 'Please enter a Sweep ID.';
+                return;
+            }
+
+            try {
+                await showcaseSdk.Sweep.moveTo(sweepId);
+                feedbackElement.textContent = `Navigated to sweep: ${sweepId}`;
+            } catch (error) {
+                console.error('Error navigating to sweep:', error);
+                feedbackElement.textContent = `Error navigating to sweep: ${error.message || 'Invalid Sweep ID'}`;
+            }
+        });
+    </script>
+</body>
+</html>
