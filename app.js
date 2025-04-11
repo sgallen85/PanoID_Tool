@@ -21,7 +21,7 @@
         let showcaseSdk = null;
         let idMap = null;
         let sweepLabels = {};
-        let currentModelSid = 'as9m4eFKdE6'; // Initial model SID
+        let currentModelSid = 'YeNsHyWcrMM'; // Initial model SID
 
         // **REPLACE WITH YOUR ACTUAL MATTERPORT SDK KEY**
         const sdkKey = '21bhgy7i4hrk6y6h43k30tf7a';
@@ -170,7 +170,8 @@
                     transition: "transition.fly"
                 });
                 feedbackElement.textContent = `Navigated to sweep: ${sweepId}`;
-            } catch (error) {
+		sweepIdInput.value = '';
+	    } catch (error) {
                 console.error('Error navigating to sweep:', error);
                 feedbackElement.textContent = `Error navigating to sweep: ${error.message || 'Invalid Sweep ID'}`;
             }
@@ -252,7 +253,9 @@
                     transition: "transition.fly"
                 });
                 legacyFeedbackElement.textContent = `Navigated to sweep with Legacy ID: ${legacyId}`;
-            } catch (error) {
+                legacySweepIdInput.value = '';
+
+	    } catch (error) {
                 console.error('Error navigating to sweep:', error);
                 legacyFeedbackElement.textContent = `Error navigating: ${error.message || 'Invalid Sweep ID'}`;
             }
@@ -276,5 +279,6 @@
             };
 
             modelFeedbackElement.textContent = `Model changed to: ${newModelId}`;
+	    modelIdInput.value = '';
         });
 
